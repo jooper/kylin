@@ -24,6 +24,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -89,7 +90,10 @@ abstract public class ResourceStore {
         String clsName = kylinConfig.getResourceStoreImpls().get(metadataUrl.getScheme());
         try {
             Class<? extends ResourceStore> cls = ClassUtil.forName(clsName, ResourceStore.class);
-            ResourceStore store = cls.getConstructor(KylinConfig.class).newInstance(kylinConfig);
+//            ResourceStore store = cls.getConstructor(KylinConfig.class).newInstance(kylinConfig);
+            Constructor<? extends ResourceStore> constructor = cls.getConstructor(KylinConfig.class);
+            ResourceStore store = constructor.newInstance(kylinConfig);
+
             if (!store.exists(METASTORE_UUID_TAG)) {
                 store.checkAndPutResource(METASTORE_UUID_TAG, new StringEntity(store.createMetaStoreUUID()), 0,
                         StringEntity.serializer);

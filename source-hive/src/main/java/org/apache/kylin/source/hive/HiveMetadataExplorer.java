@@ -196,7 +196,7 @@ public class HiveMetadataExplorer implements ISourceMetadataExplorer, ISampleDat
         KylinConfig config = KylinConfig.getInstanceFromEnv();
         String tmpDatabase = config.getHiveDatabaseForIntermediateTable();
         String tmpView = "kylin_eval_query_"
-                + UUID.nameUUIDFromBytes(query.getBytes(StandardCharsets.UTF_8)).toString().replace("-", "");
+                + UUID.nameUUIDFromBytes(query.getBytes(StandardCharsets.UTF_8)).toString().replace("-","");
 
         String dropViewSql = "DROP VIEW IF EXISTS " + tmpDatabase + "." + tmpView;
         String evalViewSql = "CREATE VIEW " + tmpDatabase + "." + tmpView + " as " + query;
