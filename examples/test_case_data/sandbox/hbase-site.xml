@@ -199,13 +199,12 @@
     
     <property>
       <name>hbase.security.authorization</name>
-<!--      <value>true</value>-->
-        <value>false</value>
+      <value>true</value>
     </property>
     
     <property>
       <name>hbase.superuser</name>
-      <value>hbase</value>
+      <value>hbase,root,hadoop</value>
     </property>
     
     <property>
@@ -220,8 +219,7 @@
     
     <property>
       <name>hbase.zookeeper.quorum</name>
-<!--      <value>sandbox.hortonworks.com</value>-->
-        <value>10.158.2.38</value>
+      <value>sandbox.hortonworks.com</value>
     </property>
     
     <property>
