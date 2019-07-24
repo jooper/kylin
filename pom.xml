@@ -65,7 +65,8 @@
     <kryo.version>4.0.0</kryo.version>
 
     <!-- mysql versions -->
-    <mysql-connector.version>5.1.8</mysql-connector.version>
+<!--    <mysql-connector.version>5.1.8</mysql-connector.version>-->
+    <mysql-connector.version>8.0.16</mysql-connector.version>
 
     <!-- Scala versions -->
     <scala.version>2.11.0</scala.version>
@@ -591,8 +592,21 @@
         <groupId>mysql</groupId>
         <artifactId>mysql-connector-java</artifactId>
         <version>${mysql-connector.version}</version>
-        <scope>provided</scope>
+<!--        <scope>provided</scope>-->
       </dependency>
+
+
+      <!-- https://mvnrepository.com/artifact/com.oracle/ojdbc6 -->
+      <dependency>
+        <groupId>com.oracle</groupId>
+        <artifactId>ojdbc6</artifactId>
+        <version>12.1.0.1-atlassian-hosted</version>
+        <scope>test</scope>
+      </dependency>
+
+
+
+
       <!-- Hive dependencies -->
       <dependency>
         <groupId>org.apache.hive</groupId>

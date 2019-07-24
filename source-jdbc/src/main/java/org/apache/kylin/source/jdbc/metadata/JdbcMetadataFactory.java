@@ -29,6 +29,8 @@ public abstract class JdbcMetadataFactory {
             return new SQLServerJdbcMetadata(dbConnConf);
         case (JdbcDialect.DIALECT_MYSQL):
             return new MySQLJdbcMetadata(dbConnConf);
+        case (JdbcDialect.DIALECT_ORACLE):
+            return new OracleJdbcMetadata(dbConnConf);
         default:
             return new DefaultJdbcMetadata(dbConnConf);
         }
