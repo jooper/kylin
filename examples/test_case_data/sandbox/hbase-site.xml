@@ -204,7 +204,7 @@
     
     <property>
       <name>hbase.superuser</name>
-      <value>hbase,root,hadoop</value>
+      <value>hbase,root,hadoop,hdfs</value>
     </property>
     
     <property>
