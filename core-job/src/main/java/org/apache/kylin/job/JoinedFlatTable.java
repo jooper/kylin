@@ -90,7 +90,8 @@ public class JoinedFlatTable {
             if (i > 0) {
                 ddl.append(",");
             }
-            ddl.append(quoteIdentifier(colName(col, flatDesc.useAlias())) + " " + getHiveDataType(col.getDatatype()) + "\n");
+            ddl.append(quoteIdentifier(colName(col, flatDesc.useAlias())) + " " + getHiveDataType(col.getDatatype())
+                    + "\n");
         }
         ddl.append(")" + "\n");
         if (TEXTFILE.equals(storageFormat)) {
@@ -128,8 +129,8 @@ public class JoinedFlatTable {
             }
         }
 
-        return "INSERT OVERWRITE TABLE " + quoteIdentifier(flatDesc.getTableName()) + " " + generateSelectDataStatement(flatDesc)
-                + ";\n";
+        return "INSERT OVERWRITE TABLE " + quoteIdentifier(flatDesc.getTableName()) + " "
+                + generateSelectDataStatement(flatDesc) + ";\n";
     }
 
     public static String generateSelectDataStatement(IJoinedFlatTableDesc flatDesc) {
@@ -138,32 +139,38 @@ public class JoinedFlatTable {
 
     public static String generateSelectDataStatement(IJoinedFlatTableDesc flatDesc, boolean singleLine,
             String[] skipAs) {
-        final String sep = singleLine ? " " : "\n";
-        final List<String> skipAsList = (skipAs == null) ? new ArrayList<String>() : Arrays.asList(skipAs);
-
-        StringBuilder sql = new StringBuilder();
-        sql.append("SELECT" + sep);
-
-        for (int i = 0; i < flatDesc.getAllColumns().size(); i++) {
-            TblColRef col = flatDesc.getAllColumns().get(i);
-            if (i > 0) {
-                sql.append(",");
-            }
-            String colTotalName = String.format(Locale.ROOT, "%s.%s", col.getTableRef().getTableName(), col.getName());
-            String quotedColTotalName = String.format(Locale.ROOT, "%s.%s",
-                    quoteIdentifier(col.getTableRef().getTableName()),
-                    quoteIdentifier(col.getName()));
-            if (skipAsList.contains(colTotalName)) {
-                sql.append(getQuotedColExpressionInSourceDB(flatDesc, col)).append(sep);
-            } else {
-                sql.append(getQuotedColExpressionInSourceDB(flatDesc, col)).append(" as ")
-                        .append(quoteIdentifier(colName(col))).append(sep);
-            }
-        }
-        appendJoinStatement(flatDesc, sql, singleLine);
-        appendWhereStatement(flatDesc, sql, singleLine);
-        return sql.toString();
+        //重写是其语法支持Oracle
+        return JoinedFlatTableRefactor.generateSelectDataStatement(flatDesc, singleLine, skipAs);
     }
+
+    //    public static String generateSelectDataStatement(IJoinedFlatTableDesc flatDesc, boolean singleLine,
+    //            String[] skipAs) {
+    //        final String sep = singleLine ? " " : "\n";
+    //        final List<String> skipAsList = (skipAs == null) ? new ArrayList<String>() : Arrays.asList(skipAs);
+    //
+    //        StringBuilder sql = new StringBuilder();
+    //        sql.append("SELECT" + sep);
+    //
+    //        for (int i = 0; i < flatDesc.getAllColumns().size(); i++) {
+    //            TblColRef col = flatDesc.getAllColumns().get(i);
+    //            if (i > 0) {
+    //                sql.append(",");
+    //            }
+    //            String colTotalName = String.format(Locale.ROOT, "%s.%s", col.getTableRef().getTableName(), col.getName());
+    //            String quotedColTotalName = String.format(Locale.ROOT, "%s.%s",
+    //                    quoteIdentifier(col.getTableRef().getTableName()),
+    //                    quoteIdentifier(col.getName()));
+    //            if (skipAsList.contains(colTotalName)) {
+    //                sql.append(getQuotedColExpressionInSourceDB(flatDesc, col)).append(sep);
+    //            } else {
+    //                sql.append(getQuotedColExpressionInSourceDB(flatDesc, col)).append(" as ")
+    //                        .append(quoteIdentifier(colName(col))).append(sep);
+    //            }
+    //        }
+    //        appendJoinStatement(flatDesc, sql, singleLine);
+    //        appendWhereStatement(flatDesc, sql, singleLine);
+    //        return sql.toString();
+    //    }
 
     static void appendJoinStatement(IJoinedFlatTableDesc flatDesc, StringBuilder sql, boolean singleLine) {
         final String sep = singleLine ? " " : "\n";
@@ -171,7 +178,9 @@ public class JoinedFlatTable {
 
         DataModelDesc model = flatDesc.getDataModel();
         TableRef rootTable = model.getRootFactTable();
-        sql.append(" FROM ").append(flatDesc.getDataModel().getRootFactTable().getTableIdentityQuoted(FlatTableSqlQuoteUtils.getQuote()))
+        sql.append(" FROM ")
+                .append(flatDesc.getDataModel().getRootFactTable()
+                        .getTableIdentityQuoted(FlatTableSqlQuoteUtils.getQuote()))
                 .append(" as ").append(quoteIdentifier(rootTable.getAlias())).append(sep);
 
         for (JoinTableDesc lookupDesc : model.getJoinTables()) {
@@ -186,8 +195,9 @@ public class JoinedFlatTable {
                     }
                     String joinType = join.getType().toUpperCase(Locale.ROOT);
 
-                    sql.append(joinType).append(" JOIN ").append(dimTable.getTableIdentityQuoted(FlatTableSqlQuoteUtils.getQuote()))
-                            .append(" as ").append(quoteIdentifier(dimTable.getAlias())).append(sep);
+                    sql.append(joinType).append(" JOIN ")
+                            .append(dimTable.getTableIdentityQuoted(FlatTableSqlQuoteUtils.getQuote())).append(" as ")
+                            .append(quoteIdentifier(dimTable.getAlias())).append(sep);
                     sql.append("ON ");
                     for (int i = 0; i < pk.length; i++) {
                         if (i > 0) {
@@ -229,8 +239,7 @@ public class JoinedFlatTable {
 
         DataModelDesc model = flatDesc.getDataModel();
         if (StringUtils.isNotEmpty(model.getFilterCondition())) {
-            String quotedFilterCondition = quoteIdentifierInSqlExpr(flatDesc,
-                    model.getFilterCondition());
+            String quotedFilterCondition = quoteIdentifierInSqlExpr(flatDesc, model.getFilterCondition());
             whereBuilder.append(" AND (").append(quotedFilterCondition).append(") "); // -> filter condition contains special character may cause bug
         }
         if (flatDesc.getSegment() != null) {
@@ -241,7 +250,8 @@ public class JoinedFlatTable {
                 if (segRange != null && !segRange.isInfinite()) {
                     whereBuilder.append(" AND (");
                     String quotedPartitionCond = quoteIdentifierInSqlExpr(flatDesc,
-                            partDesc.getPartitionConditionBuilder().buildDateRangeCondition(partDesc, flatDesc.getSegment(), segRange));
+                            partDesc.getPartitionConditionBuilder().buildDateRangeCondition(partDesc,
+                                    flatDesc.getSegment(), segRange));
                     whereBuilder.append(quotedPartitionCond);
                     whereBuilder.append(")" + sep);
                 }
@@ -282,7 +292,8 @@ public class JoinedFlatTable {
     public static String generateRedistributeFlatTableStatement(IJoinedFlatTableDesc flatDesc, CubeDesc cubeDesc) {
         final String tableName = flatDesc.getTableName();
         StringBuilder sql = new StringBuilder();
-        sql.append("INSERT OVERWRITE TABLE " + quoteIdentifier(tableName) + " SELECT * FROM " + quoteIdentifier(tableName));
+        sql.append("INSERT OVERWRITE TABLE " + quoteIdentifier(tableName) + " SELECT * FROM "
+                + quoteIdentifier(tableName));
 
         if (flatDesc.getClusterBy() != null) {
             appendClusterStatement(sql, flatDesc.getClusterBy());
@@ -310,8 +321,7 @@ public class JoinedFlatTable {
 
     public static String getQuotedColExpressionInSourceDB(IJoinedFlatTableDesc flatDesc, TblColRef col) {
         if (!col.getColumnDesc().isComputedColumn()) {
-            return quoteIdentifier(col.getTableAlias()) + "."
-                    + quoteIdentifier(col.getName());
+            return quoteIdentifier(col.getTableAlias()) + "." + quoteIdentifier(col.getName());
         } else {
             String computeExpr = col.getColumnDesc().getComputedColumnExpr();
             return quoteIdentifierInSqlExpr(flatDesc, computeExpr);
