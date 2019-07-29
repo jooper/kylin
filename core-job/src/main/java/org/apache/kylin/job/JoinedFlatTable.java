@@ -139,7 +139,7 @@ public class JoinedFlatTable {
 
     public static String generateSelectDataStatement(IJoinedFlatTableDesc flatDesc, boolean singleLine,
             String[] skipAs) {
-        //重写是其语法支持Oracle
+        //20190725  jwp  重写是其语法支持Oracle
         return JoinedFlatTableRefactor.generateSelectDataStatement(flatDesc, singleLine, skipAs);
     }
 

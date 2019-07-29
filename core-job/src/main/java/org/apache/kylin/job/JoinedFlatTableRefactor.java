@@ -61,7 +61,7 @@ public class JoinedFlatTableRefactor {
         Set<TableRef> dimTableCache = new HashSet<>();
 
         DataModelDesc model = flatDesc.getDataModel();
-        TableRef rootTable = model.getRootFactTable();
+//        TableRef rootTable = model.getRootFactTable();
         sql.append(" FROM ")
                 .append(flatDesc.getDataModel().getRootFactTable()
                         .getTableIdentityQuoted(FlatTableSqlQuoteUtils.getQuote()))
