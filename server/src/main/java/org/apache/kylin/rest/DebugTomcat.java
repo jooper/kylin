@@ -129,6 +129,7 @@ public class DebugTomcat {
         webContext.addErrorPage(notFound);
         webContext.addWelcomeFile("index.html");
 
+//        tomcat.setPort(8090);
         // tomcat start
         tomcat.start();
         tomcat.getServer().await();

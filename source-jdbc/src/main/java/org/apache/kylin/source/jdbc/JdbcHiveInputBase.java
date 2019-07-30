@@ -175,8 +175,11 @@ public class JdbcHiveInputBase extends HiveInputBase {
             String filedDelimiter = config.getJdbcSourceFieldDelimiter();
             int mapperNum = config.getSqoopMapperNum();
 
-            String bquery = String.format(Locale.ROOT, "SELECT min(%s), max(%s) FROM %s.%s as %s", splitColumn,
-                    splitColumn, splitDatabase, splitTable, splitTableAlias);
+//            String bquery = String.format(Locale.ROOT, "SELECT min(%s), max(%s) FROM %s.%s as %s", splitColumn,
+//                    splitColumn, splitDatabase, splitTable, splitTableAlias);
+//            20190730 jwp
+            String bquery = String.format(Locale.ROOT, "SELECT min(%s), max(%s) FROM %s.%s", splitColumn,
+                    splitColumn, splitDatabase, splitTable);
             if (partitionDesc.isPartitioned()) {
                 SegmentRange segRange = flatDesc.getSegRange();
                 if (segRange != null && !segRange.isInfinite()) {
