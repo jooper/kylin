@@ -20,8 +20,8 @@
   <div class="navbar navbar-default" role="navigation">
     <div class="container-fluid">
       <div class="navbar-header">
-        <a class="navbar-brand" href="query" style="padding: 2px 10px 0px 0px"><img src="image/logo.png" height="40px"
-                                                                                    width="40px"/>
+        <a class="navbar-brand" href="query" style="padding: 2px 10px 0px 0px">
+          <img src="image/logo.png" height="40px" width="40px"/>
           <small> Kylin</small>
         </a>
       </div>
@@ -56,6 +56,9 @@
           <li class="{{activeTab=='dashboard'?'purple':'green'}}" ng-if="userService.isAuthorized() && isShowDashboard">
             <a href="dashboard">Dashboard</a>
           </li>
+<!--          <li class="{{activeTab=='jobs'?'purple':'green'}}" ng-if="userService.isAuthorized()">-->
+<!--           <a href="#">v2.6.4-cdh6.0</a>-->
+<!--          </li>-->
         </ul>
         <ul class="nav navbar-nav navbar-right">
           <li class="dropdown light-blue" ng-if="config.documents.length > 0">
@@ -76,6 +79,7 @@
             <ul class="user-menu dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close"
                 role="menu">
               <li><a ng-click="logout()"><i class="ace-icon fa fa-power-off"></i> Logout</a></li>
+<!--              <li><a><i class="ace-icon fa fa-power-off"></i> v2.6.4-cdh6.0</a></li>-->
             </ul>
           </li>
         </ul>
